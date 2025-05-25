@@ -1,0 +1,125 @@
+/* src/styles.css */
+
+/* App-wide colors */
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #fff;
+}
+
+.main-content {
+  width: 100%;
+  max-width: none;
+}
+
+
+#root {
+  width: 100%;
+}
+
+/* Links */
+a {
+  text-decoration: none;
+  color: white;
+}
+
+a:hover {
+  color: #ffc107;                /* Bootstrap warning yellow for hover */
+}
+
+/* Main content wrapper */
+.main-content {
+  padding-top: 5rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  min-height: 100vh;
+  background-color: #000; /* match background */
+  color: white;
+}
+
+
+/* Bootstrap override for navbar */
+.navbar {
+  border-bottom: 2px solid #ffffff22;
+}
+
+/* Buttons */
+.btn-f1 {
+  background-color: #e10600;
+  color: white;
+  border: none;
+}
+
+.btn-f1:hover {
+  background-color: #ba0500;
+}
+
+.driver-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.driver-icon {
+  width: 64px;
+  height: auto;
+  border-radius: 4px;
+}
+
+
+.driver-card-grid {
+  width: 150px;
+  background: #111;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.driver-card-grid:hover {
+  transform: scale(1.05);
+}
+
+.driver-photo-grid {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.team-logo-small {
+  width: 16px;
+  height: 16px;
+}
+
+.driver-name-grid {
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.driver-card-grid.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.podium-slot {
+  width: 100px;
+  height: 100px;
+  background-color: #111;
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px;
+  transition: transform 0.2s, border 0.2s;
+  cursor: pointer;
+}
+
+.podium-slot:hover {
+  transform: scale(1.05);
+  border-color: #e10600; /* red hover outline */
+}
+
+.podium-slot.selected {
+  border-color: #ffc107; /* yellow when active */
+}

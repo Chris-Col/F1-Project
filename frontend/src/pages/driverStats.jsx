@@ -1,22 +1,28 @@
 import { useEffect, useState } from 'react';
+import logger from '../utils/logger.js';
 import '../styles.css';
 
 /**
  * Driver statistics dashboard (2025 season)
  * – Correct Qualifying & Sprint averages
- * – “Classified” cars count as finishers
+ * – "Classified" cars count as finishers
  * – Concurrency-limited race/session fetches (max 5 in flight)
  * – Robust cache keyed by finished race-hash + 36 h TTL
  * – Driver metadata cached locally
- *
- * NOTE Move the Rapid API credentials into .env before production.
  */
+
+const API_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
+const API_HOST = 'hyprace-api.p.rapidapi.com';
+const API_HEADERS = {
+  'X-RapidAPI-Key': API_KEY,
+  'X-RapidAPI-Host': API_HOST,
+};
 
 export default function DriverStats() {
   /* ─────────────────────── state ─────────────────────── */
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState(null);
+  const [error, setError] = useState(null);
 
   /* ───────────────────── helper utils ────────────────── */
   const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -25,10 +31,12 @@ export default function DriverStats() {
     for (let i = 0; i <= retries; i += 1) {
       const res = await fetch(url, options);
       if (res.status === 429 && i < retries) {
+        logger.warn('Rate limited, retrying...', { url, attempt: i + 1 });
         await sleep(backoff);
         continue;
       }
       if (res.ok) return res;
+      logger.error('Fetch failed', { url, status: res.status });
       throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
     }
   };
@@ -52,18 +60,15 @@ export default function DriverStats() {
     const abort = new AbortController();
 
     const run = async () => {
+      setError(null); // Reset error state on new fetch
+
       try {
+        logger.info('Fetching driver stats...');
+
         /* 1️⃣ Which GPs have finished? */
         const gpData = await fetchWithRetry(
-          'https://hyprace-api.p.rapidapi.com/v1/grands-prix?seasonYear=2025&pageSize=25',
-          {
-            method: 'GET',
-            signal: abort.signal,
-            headers: {
-              'X-RapidAPI-Key':  '66edc26a51msh8ae710d7b0ae98ep155059jsnb92b842b81fa',
-              'X-RapidAPI-Host': 'hyprace-api.p.rapidapi.com',
-            },
-          },
+          `https://${API_HOST}/v1/grands-prix?seasonYear=2025&pageSize=25`,
+          { method: 'GET', signal: abort.signal, headers: API_HEADERS },
         ).then(r => r.json());
 
         const finished = gpData.items?.filter(r => r.status === 'Finished') ?? [];
@@ -76,25 +81,21 @@ export default function DriverStats() {
           cache.stats &&
           Date.now() - new Date(cache.lastUpdated || 0) < TTL
         ) {
+          logger.info('Using cached driver stats', { raceCount: finished.length });
           setDrivers(cache.stats);
           setLoading(false);
           return;
         }
+
+        logger.info('Cache miss, fetching fresh data', { finishedRaces: finished.length });
 
         /* 2️⃣ Aggregate results across finished rounds */
         const acc = new Map(); // driverId → counters
 
         const fetchSessions = id =>
           fetchWithRetry(
-            `https://hyprace-api.p.rapidapi.com/v1/grands-prix/${id}/races`,
-            {
-              method: 'GET',
-              signal: abort.signal,
-              headers: {
-                'X-RapidAPI-Key':  '66edc26a51msh8ae710d7b0ae98ep155059jsnb92b842b81fa',
-                'X-RapidAPI-Host': 'hyprace-api.p.rapidapi.com',
-              },
-            },
+            `https://${API_HOST}/v1/grands-prix/${id}/races`,
+            { method: 'GET', signal: abort.signal, headers: API_HEADERS },
           ).then(r => r.json());
 
         await mapLimited(finished, 5, async gp => {
@@ -147,27 +148,13 @@ export default function DriverStats() {
 
         /* 3️⃣ Get latest standings (IDs + points) */
         const seasonId = await fetchWithRetry(
-          'https://hyprace-api.p.rapidapi.com/v1/seasons?isCurrent=true',
-          {
-            method: 'GET',
-            signal: abort.signal,
-            headers: {
-              'X-RapidAPI-Key':  '66edc26a51msh8ae710d7b0ae98ep155059jsnb92b842b81fa',
-              'X-RapidAPI-Host': 'hyprace-api.p.rapidapi.com',
-            },
-          },
+          `https://${API_HOST}/v1/seasons?isCurrent=true`,
+          { method: 'GET', signal: abort.signal, headers: API_HEADERS },
         ).then(r => r.json()).then(j => j.items?.[0]?.id);
 
         const standings = await fetchWithRetry(
-          `https://hyprace-api.p.rapidapi.com/v1/drivers-standings?isLastStanding=true&seasonId=${seasonId}`,
-          {
-            method: 'GET',
-            signal: abort.signal,
-            headers: {
-              'X-RapidAPI-Key':  '66edc26a51msh8ae710d7b0ae98ep155059jsnb92b842b81fa',
-              'X-RapidAPI-Host': 'hyprace-api.p.rapidapi.com',
-            },
-          },
+          `https://${API_HOST}/v1/drivers-standings?isLastStanding=true&seasonId=${seasonId}`,
+          { method: 'GET', signal: abort.signal, headers: API_HEADERS },
         ).then(r => r.json()).then(j => j.items?.[0]?.standings ?? []);
 
         /* ✅ Sort the standings so WDC positions are correct
@@ -182,17 +169,14 @@ export default function DriverStats() {
         const metaCache = JSON.parse(localStorage.getItem('driverMetaCache') || '{}');
         const missing   = sortedStandings.map(s => s.driverId).filter(id => !metaCache[id]);
 
+        if (missing.length > 0) {
+          logger.info('Fetching missing driver metadata', { count: missing.length });
+        }
+
         await mapLimited(missing, 5, async id => {
           const metaJson = await fetchWithRetry(
-            `https://hyprace-api.p.rapidapi.com/v1/drivers/${id}`,
-            {
-              method: 'GET',
-              signal: abort.signal,
-              headers: {
-                'X-RapidAPI-Key':  '66edc26a51msh8ae710d7b0ae98ep155059jsnb92b842b81fa',
-                'X-RapidAPI-Host': 'hyprace-api.p.rapidapi.com',
-              },
-            },
+            `https://${API_HOST}/v1/drivers/${id}`,
+            { method: 'GET', signal: abort.signal, headers: API_HEADERS },
           ).then(r => r.json());
 
           metaCache[id] = metaJson.items?.[0] ?? metaJson;
@@ -235,10 +219,12 @@ export default function DriverStats() {
             stats: rows,
           }),
         );
+
+        logger.info('Driver stats loaded', { driverCount: rows.length });
         setDrivers(rows);
       } catch (e) {
         if (e.name !== 'AbortError') {
-          console.error(e);
+          logger.error('Failed to load driver stats', { error: e.message });
           setError(e);
         }
       } finally {

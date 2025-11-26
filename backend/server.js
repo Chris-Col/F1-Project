@@ -12,12 +12,14 @@ import { addRequestId, httpLogger } from './middleware/requestLogger.js';
 
 // Services
 import { syncCalendar } from './services/syncCalender.js';
+import { startScoringScheduler } from './services/scoringScheduler.js';
 
 // Routers
 import authRoutes from './routes/authRoutes.js';
 import leaderboardRouter from './routes/leaderboard.js';
 import predictionsRouter from './routes/predictions.js';
 import devAuth from './routes/devAuth.js';
+import adminRouter from './routes/admin.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '.env') });
@@ -47,6 +49,9 @@ mongoose.connect(process.env.MONGO_URI)
     } catch (err) {
       logger.warn('GP calendar sync failed', { error: err.message });
     }
+
+    // Start automatic scoring scheduler
+    startScoringScheduler();
   })
   .catch(err => {
     logger.error('MongoDB connection error', { error: err.message });
@@ -54,10 +59,11 @@ mongoose.connect(process.env.MONGO_URI)
   });
 
 /* ───────────── API routes (mount FIRST) ───────────── */
-app.use('/api', devAuth);                        // 👈 provides POST /api/dev-login
+app.use('/api', devAuth);
 app.use('/api/auth', authRoutes);
 app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/predictions', predictionsRouter);
+app.use('/api/admin', adminRouter);
 
 // simple health check
 app.get('/api/health', (_req, res) => res.json({ ok: true }));

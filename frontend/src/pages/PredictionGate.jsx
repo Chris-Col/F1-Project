@@ -1,9 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cacheRace } from '../utils/raceCache';
+import logger from '../utils/logger.js';
 
 const CAL_CACHE_KEY = 'calendarCache2025';
 const ASSUME_MAIN_MS = 3 * 60 * 60 * 1000; // if endDate absent
+
+const API_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
+const API_HOST = 'hyprace-api.p.rapidapi.com';
+const API_HEADERS = {
+  'X-RapidAPI-Key': API_KEY,
+  'X-RapidAPI-Host': API_HOST,
+};
 
 function buildEnriched(items) {
   return (items || [])
@@ -87,16 +95,10 @@ export default function PredictionGate() {
     // 2) Revalidate in the background
     (async () => {
       try {
+        logger.debug('Fetching GP calendar from API');
         const res = await fetch(
-          'https://hyprace-api.p.rapidapi.com/v1/grands-prix?seasonYear=2025&pageSize=25',
-          {
-            method: 'GET',
-            signal: controller.signal,
-            headers: {
-              'X-RapidAPI-Key': '66edc26a51msh8ae710d7b0ae98ep155059jsnb92b842b81fa',
-              'X-RapidAPI-Host': 'hyprace-api.p.rapidapi.com',
-            },
-          },
+          `https://${API_HOST}/v1/grands-prix?seasonYear=2025&pageSize=25`,
+          { method: 'GET', signal: controller.signal, headers: API_HEADERS },
         );
         const { items = [] } = await res.json();
         if (!active) return;
@@ -132,6 +134,7 @@ export default function PredictionGate() {
         }
       } catch (err) {
         if (err.name === 'AbortError') return;    // prevent StrictMode flicker
+        logger.error('Failed to fetch GP calendar', { error: err.message });
         // Only show seasonDone if we never drew from cache:
         setStatus(prev => (prev === 'loading' ? 'seasonDone' : prev));
       }

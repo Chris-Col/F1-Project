@@ -123,3 +123,27 @@ a:hover {
 .podium-slot.selected {
   border-color: #ffc107; /* yellow when active */
 }
+
+.driver-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.driver-card {
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.driver-img {
+  width: 100%;
+  max-width: 160px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}

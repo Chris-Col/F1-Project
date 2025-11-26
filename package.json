@@ -1,0 +1,24 @@
+{
+  "name": "f1-project",
+  "version": "1.0.0",
+  "description": "F1 Prediction App",
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,green \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "backend": "npm run dev --prefix backend",
+    "frontend": "npm run dev --prefix frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chris-Col/F1-Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Chris-Col/F1-Project/issues"
+  },
+  "homepage": "https://github.com/Chris-Col/F1-Project#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

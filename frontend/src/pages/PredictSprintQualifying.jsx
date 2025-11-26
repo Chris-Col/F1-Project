@@ -4,9 +4,9 @@ import { getCachedRace } from '../utils/raceCache';
 import { predictionApi } from '../api/predictionApi';
 import PodiumPicker from '../components/PodiumPicker';
 
-export default function PredictQualifying() {
+export default function PredictSprintQualifying() {
   const nav = useNavigate();
-  const race = getCachedRace();
+  const race = getCachedRace(); // { id, name, endDate }
   const [saving, setSaving] = useState(false);
   const [error, setError]   = useState('');
 
@@ -16,8 +16,8 @@ export default function PredictQualifying() {
 
   const handleDone = async (picks) => {
     if (!race || !race.id) return;
-    const qualiTop3 = [picks.first, picks.second, picks.third];
-    if (new Set(qualiTop3).size !== 3 || qualiTop3.some(x => !x)) {
+    const sprintQualiTop3 = [picks.first, picks.second, picks.third];
+    if (new Set(sprintQualiTop3).size !== 3 || sprintQualiTop3.some(x => !x)) {
       setError('Please choose three distinct drivers.');
       return;
     }
@@ -26,16 +26,16 @@ export default function PredictQualifying() {
     setSaving(true);
 
     try {
-      sessionStorage.setItem(`quali:${race.id}`, JSON.stringify(qualiTop3));
+      sessionStorage.setItem(`sprintQuali:${race.id}`, JSON.stringify(sprintQualiTop3));
     } catch {}
 
     try {
       await predictionApi.upsert({
         gpId: race.id,
         seasonYear: new Date(race.endDate).getUTCFullYear() || 2025,
-        picks: { qualiTop3 },
+        picks: { sprintQualiTop3 },
       });
-      nav('/predict-race');
+      nav('/predict-sprint-race');
     } catch (e) {
       console.error(e);
       setError(e.message || 'Failed to save prediction');
@@ -48,9 +48,9 @@ export default function PredictQualifying() {
     <div style={{ position: 'relative' }}>
       {error && <div className="alert alert-danger text-center">{error}</div>}
       <PodiumPicker
-        title={race ? `${race.name} – GP Qualifying Prediction` : 'Loading race…'}
+        title={race ? `${race.name} – Sprint Qualifying Prediction` : 'Loading race…'}
         onComplete={handleDone}
-        nextLabel={saving ? 'Saving…' : 'Next: Grand Prix Race Prediction'}
+        nextLabel={saving ? 'Saving…' : 'Next: Sprint Race Prediction'}
       />
     </div>
   );

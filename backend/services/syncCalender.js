@@ -5,7 +5,7 @@ import GrandPrix from '../models/GrandPrix.js';
 const ASSUME_MS = 3 * 60 * 60 * 1000;
 
 export async function syncCalendar(year = 2025) {
-  const res = await fetch(`https://hyprace-api.p.rapidapi.com/v1/grands-prix?seasonYear=${year}&pageSize=25`, {
+  const res = await fetch(`https://hyprace-api.p.rapidapi.com/v2/grands-prix?seasonYear=${year}&pageSize=25`, {
     headers: {
       'X-RapidAPI-Key':  process.env.RAPIDAPI_KEY,
       'X-RapidAPI-Host': 'hyprace-api.p.rapidapi.com'

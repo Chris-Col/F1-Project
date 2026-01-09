@@ -31,8 +31,8 @@ export default function Navbar() {
             <li className="nav-item"><Link className="nav-link" to="/">Home</Link></li>
             <li className="nav-item"><Link className="nav-link" to="/start-prediction">Predict</Link></li>
             <li className="nav-item"><Link className="nav-link" to="/leaderboard">Leaderboard</Link></li>
-            <li className="nav-item"><Link className="nav-link" to="/history">History</Link></li>
             <li className="nav-item"><Link className="nav-link" to="/driver-stats">Driver Stats</Link></li>
+            <li className="nav-item"><Link className="nav-link" to="/teammate-h2h">H2H</Link></li>
             {username ? (
               <>
                 <li className="nav-item">

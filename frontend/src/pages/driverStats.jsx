@@ -9,6 +9,8 @@ import '../styles.css';
  * – Concurrency-limited race/session fetches (max 5 in flight)
  * – Robust cache keyed by finished race-hash + 36 h TTL
  * – Driver metadata cached locally
+ *
+ * Updated to use Hyprace API V2
  */
 
 const API_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
@@ -27,12 +29,13 @@ export default function DriverStats() {
   /* ───────────────────── helper utils ────────────────── */
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-  const fetchWithRetry = async (url, options, retries = 3, backoff = 1_000) => {
+  const fetchWithRetry = async (url, options, retries = 5, backoff = 2_000) => {
     for (let i = 0; i <= retries; i += 1) {
       const res = await fetch(url, options);
       if (res.status === 429 && i < retries) {
-        logger.warn('Rate limited, retrying...', { url, attempt: i + 1 });
-        await sleep(backoff);
+        const waitTime = backoff * (i + 1); // Exponential backoff
+        logger.warn('Rate limited, retrying...', { url, attempt: i + 1, waitTime });
+        await sleep(waitTime);
         continue;
       }
       if (res.ok) return res;
@@ -65,11 +68,15 @@ export default function DriverStats() {
       try {
         logger.info('Fetching driver stats...');
 
-        /* 1️⃣ Which GPs have finished? */
+        /* 1️⃣ Which GPs have finished? (V2 endpoint) */
         const gpData = await fetchWithRetry(
-          `https://${API_HOST}/v1/grands-prix?seasonYear=2025&pageSize=25`,
+          `https://${API_HOST}/v2/grands-prix?seasonYear=2025&pageSize=25`,
           { method: 'GET', signal: abort.signal, headers: API_HEADERS },
         ).then(r => r.json());
+
+        // Extract the seasonId from the first GP (all GPs in response share same season)
+        const seasonId = gpData.items?.[0]?.season?.id;
+        logger.info('Found season ID', { seasonId });
 
         const finished = gpData.items?.filter(r => r.status === 'Finished') ?? [];
         const raceIdsKey = finished.map(r => r.id).sort().join(',');
@@ -89,73 +96,145 @@ export default function DriverStats() {
 
         logger.info('Cache miss, fetching fresh data', { finishedRaces: finished.length });
 
-        /* 2️⃣ Aggregate results across finished rounds */
+        /* 2️⃣ Aggregate results across finished rounds (V2 endpoint) */
         const acc = new Map(); // driverId → counters
 
-        const fetchSessions = id =>
+        // V2 API has SEPARATE endpoints for races and qualifying:
+        // - /races returns: MainRace, SprintRace (uses participations[].result.finishedPosition)
+        // - /qualifying returns: Standard, Sprint (uses results[].position)
+
+        const fetchRaceList = gpId =>
           fetchWithRetry(
-            `https://${API_HOST}/v1/grands-prix/${id}/races`,
+            `https://${API_HOST}/v2/grands-prix/${gpId}/races`,
             { method: 'GET', signal: abort.signal, headers: API_HEADERS },
           ).then(r => r.json());
 
-        await mapLimited(finished, 5, async gp => {
-          const races = await fetchSessions(gp.id);
+        const fetchQualifyingList = gpId =>
+          fetchWithRetry(
+            `https://${API_HOST}/v2/grands-prix/${gpId}/qualifying`,
+            { method: 'GET', signal: abort.signal, headers: API_HEADERS },
+          ).then(r => r.json());
 
-          const main   = races.items?.find(s => s.type === 'MainRace');
-          const sprint = races.items?.find(s => s.type === 'SprintRace');
-          const quali  = races.items?.find(s => s.type === 'Qualifying');
+        const fetchRaceResults = (gpId, raceId) =>
+          fetchWithRetry(
+            `https://${API_HOST}/v2/grands-prix/${gpId}/races/${raceId}/results`,
+            { method: 'GET', signal: abort.signal, headers: API_HEADERS },
+          ).then(r => r.json());
 
-          const parts = [
-            ...(main   ? main.participations   : []).map(p => ({ ...p, sess: 'Main'   })),
-            ...(sprint ? sprint.participations : []).map(p => ({ ...p, sess: 'Sprint' })),
-            ...(quali  ? quali.participations  : []).map(p => ({ ...p, sess: 'Quali'  })),
-          ];
+        const fetchQualifyingResults = (gpId, qualiId) =>
+          fetchWithRetry(
+            `https://${API_HOST}/v2/grands-prix/${gpId}/qualifying/${qualiId}/results`,
+            { method: 'GET', signal: abort.signal, headers: API_HEADERS },
+          ).then(r => r.json());
 
-          for (const p of parts) {
+        // Reduced concurrency to 2 and sequential session fetches to avoid rate limits
+        await mapLimited(finished, 2, async gp => {
+          // Fetch both race and qualifying lists
+          const [races, qualifyings] = await Promise.all([
+            fetchRaceList(gp.id),
+            fetchQualifyingList(gp.id),
+          ]);
+          await sleep(300);
+
+          const raceItems = races.items ?? [];
+          const qualiItems = qualifyings.items ?? [];
+
+          // Find session IDs
+          const mainRace = raceItems.find(s => s.type === 'MainRace');
+          const sprintRace = raceItems.find(s => s.type === 'SprintRace');
+          const standardQuali = qualiItems.find(s => s.type === 'Standard');
+          const sprintQuali = qualiItems.find(s => s.type === 'Sprint');
+
+          // Fetch results sequentially with small delays to avoid rate limits
+          const mainResults = mainRace?.id ? await fetchRaceResults(gp.id, mainRace.id) : null;
+          await sleep(300);
+          const sprintRaceResults = sprintRace?.id ? await fetchRaceResults(gp.id, sprintRace.id) : null;
+          await sleep(300);
+          const qualiResults = standardQuali?.id ? await fetchQualifyingResults(gp.id, standardQuali.id) : null;
+          await sleep(300);
+          const sprintQualiResults = sprintQuali?.id ? await fetchQualifyingResults(gp.id, sprintQuali.id) : null;
+
+          // Race results use participations[].result structure
+          const mainParticipations = mainResults?.participations ?? [];
+          const sprintParticipations = sprintRaceResults?.participations ?? [];
+
+          // Qualifying results use results[] structure (position at top level)
+          const qualiResultsList = qualiResults?.results ?? [];
+          const sprintQualiResultsList = sprintQualiResults?.results ?? [];
+
+          // Process main race results
+          for (const p of mainParticipations) {
             const { result = {} } = p;
-            const id        = p.driverId;
-            const status    = result.finishingStatus?.status;
-            const finished  = ['Finished', 'Classified'].includes(status);
+            const id = p.driverId;
+            const posStatus = result.resultStatus?.positionStatus;
+            const status = result.resultStatus?.status;
+            const isFinished = ['Finished', 'Classified'].includes(posStatus) || status === 'Ok';
 
             if (!acc.has(id)) {
-              acc.set(id, { fSum:0,fCnt:0, sSum:0,sCnt:0, qSum:0,qCnt:0, gSum:0,gCnt:0 });
+              acc.set(id, { fSum: 0, fCnt: 0, sSum: 0, sCnt: 0, qSum: 0, qCnt: 0, gSum: 0, gCnt: 0 });
             }
             const a = acc.get(id);
 
-            switch (p.sess) {
-              case 'Main':
-                if (finished && result.finishedPosition != null) {
-                  a.fCnt++; a.fSum += result.finishedPosition;
-                }
-                if (result.grid > 0) {
-                  a.gCnt++; a.gSum += result.grid;
-                }
-                break;
-              case 'Sprint':
-                if (finished && result.finishedPosition != null) {
-                  a.sCnt++; a.sSum += result.finishedPosition;
-                }
-                break;
-              case 'Quali':
-                if (result.position > 0) {
-                  a.qCnt++; a.qSum += result.position;
-                }
-                break;
-              default:
+            if (isFinished && result.finishedPosition != null) {
+              a.fCnt++;
+              a.fSum += result.finishedPosition;
+            }
+            if (result.grid > 0) {
+              a.gCnt++;
+              a.gSum += result.grid;
             }
           }
+
+          // Process sprint race results
+          for (const p of sprintParticipations) {
+            const { result = {} } = p;
+            const id = p.driverId;
+            const posStatus = result.resultStatus?.positionStatus;
+            const status = result.resultStatus?.status;
+            const isFinished = ['Finished', 'Classified'].includes(posStatus) || status === 'Ok';
+
+            if (!acc.has(id)) {
+              acc.set(id, { fSum: 0, fCnt: 0, sSum: 0, sCnt: 0, qSum: 0, qCnt: 0, gSum: 0, gCnt: 0 });
+            }
+            const a = acc.get(id);
+
+            if (isFinished && result.finishedPosition != null) {
+              a.sCnt++;
+              a.sSum += result.finishedPosition;
+            }
+          }
+
+          // Process qualifying results (position is at top level, not nested)
+          for (const q of qualiResultsList) {
+            const id = q.driverId;
+            if (!acc.has(id)) {
+              acc.set(id, { fSum: 0, fCnt: 0, sSum: 0, sCnt: 0, qSum: 0, qCnt: 0, gSum: 0, gCnt: 0 });
+            }
+            const a = acc.get(id);
+
+            if (q.position > 0) {
+              a.qCnt++;
+              a.qSum += q.position;
+            }
+          }
+
+          // Process sprint qualifying results (not tracked separately for now, but available if needed)
+          // Sprint qualifying positions could be added as a separate stat if desired
         });
 
-        /* 3️⃣ Get latest standings (IDs + points) */
-        const seasonId = await fetchWithRetry(
-          `https://${API_HOST}/v1/seasons?isCurrent=true`,
+        /* 3️⃣ Get latest standings (V2 endpoint) - must use seasonId */
+        const standingsData = await fetchWithRetry(
+          `https://${API_HOST}/v2/drivers-standings?seasonId=${seasonId}&isLastStanding=true&pageSize=25`,
           { method: 'GET', signal: abort.signal, headers: API_HEADERS },
-        ).then(r => r.json()).then(j => j.items?.[0]?.id);
+        ).then(r => r.json());
 
-        const standings = await fetchWithRetry(
-          `https://${API_HOST}/v1/drivers-standings?isLastStanding=true&seasonId=${seasonId}`,
-          { method: 'GET', signal: abort.signal, headers: API_HEADERS },
-        ).then(r => r.json()).then(j => j.items?.[0]?.standings ?? []);
+        logger.info('Standings data received', { standingsData });
+
+        // V2 might have different structure - try multiple paths
+        const standings = standingsData.items?.[0]?.standings
+          ?? standingsData.standings
+          ?? standingsData.items
+          ?? [];
 
         /* ✅ Sort the standings so WDC positions are correct
            Prefer API-provided `position`; otherwise sort by points desc. */
@@ -165,7 +244,7 @@ export default function DriverStats() {
           return 0;
         });
 
-        /* 4️⃣ Driver-meta cache */
+        /* 4️⃣ Driver-meta cache (V2 endpoint) */
         const metaCache = JSON.parse(localStorage.getItem('driverMetaCache') || '{}');
         const missing   = sortedStandings.map(s => s.driverId).filter(id => !metaCache[id]);
 
@@ -173,13 +252,15 @@ export default function DriverStats() {
           logger.info('Fetching missing driver metadata', { count: missing.length });
         }
 
-        await mapLimited(missing, 5, async id => {
+        await mapLimited(missing, 2, async id => {
           const metaJson = await fetchWithRetry(
-            `https://${API_HOST}/v1/drivers/${id}`,
+            `https://${API_HOST}/v2/drivers/${id}`,
             { method: 'GET', signal: abort.signal, headers: API_HEADERS },
           ).then(r => r.json());
 
-          metaCache[id] = metaJson.items?.[0] ?? metaJson;
+          // V2 driver endpoint returns driver object directly or in items array
+          metaCache[id] = metaJson.items?.[0] ?? metaJson.driver ?? metaJson;
+          await sleep(200); // Small delay between driver fetches
         });
         localStorage.setItem('driverMetaCache', JSON.stringify(metaCache));
 
@@ -241,10 +322,10 @@ export default function DriverStats() {
   if (error)   return <div className="text-white text-center">Error: {error.message}</div>;
 
   return (
-    <>
-      <div className="text-white text-center my-4">
+    <div className="main-content">
+      <div className="driver-stats-header">
         <button
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+          className="btn btn-secondary"
           onClick={() => {
             localStorage.removeItem('driverStatsCache');
             window.location.reload();
@@ -268,6 +349,6 @@ export default function DriverStats() {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }

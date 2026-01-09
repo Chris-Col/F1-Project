@@ -97,7 +97,7 @@ export default function PredictionGate() {
       try {
         logger.debug('Fetching GP calendar from API');
         const res = await fetch(
-          `https://${API_HOST}/v1/grands-prix?seasonYear=2025&pageSize=25`,
+          `https://${API_HOST}/v2/grands-prix?seasonYear=2025&pageSize=25`,
           { method: 'GET', signal: controller.signal, headers: API_HEADERS },
         );
         const { items = [] } = await res.json();

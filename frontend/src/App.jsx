@@ -10,11 +10,13 @@ import ThankYou                 from './pages/ThankYou';
 import Register                 from './pages/Register';
 import Login                    from './pages/Login';
 import DriverStatsPage          from './pages/driverStats';
+import TeammateH2H              from './pages/TeammateH2H';
 import SeasonLeaderboard        from './pages/SeasonLeaderboard';
 import GpLeaderboard            from './pages/GpLeaderboard';
 import PrivateRoute             from './components/PrivateRoute';
 
 import './App.css';
+import './styles.css';
 
 export default function App() {
   return (
@@ -25,15 +27,21 @@ export default function App() {
         <Route
           path="/"
           element={
-            <div className="main-content text-center">
-              <h1>Welcome to F1 Predictor</h1>
-              <p>Make predictions, view race data, and compete with others.</p>
+            <div className="main-content">
+              <div className="hero-section">
+                <h1>F1 Predictor</h1>
+                <p>Predict race results, compete with friends, and climb the leaderboard.</p>
+                <a href="/start-prediction" className="btn btn-f1">
+                  Start Predicting
+                </a>
+              </div>
             </div>
           }
         />
         <Route path="/register"      element={<Register />} />
         <Route path="/login"         element={<Login />} />
         <Route path="/driver-stats"  element={<DriverStatsPage />} />
+        <Route path="/teammate-h2h" element={<TeammateH2H />} />
 
         {/* Leaderboards (public) ---------------------------------------- */}
         <Route path="/leaderboard"                 element={<SeasonLeaderboard />} />

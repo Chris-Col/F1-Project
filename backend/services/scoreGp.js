@@ -21,7 +21,7 @@ export async function scoreGp({ gpId, seasonYear, sprintFlag }) {
   logger.info('Fetching race results from Hyprace', { gpId, seasonYear, sprintFlag });
 
   // Pull session results from Hyprace once
-  const res = await fetch(`https://hyprace-api.p.rapidapi.com/v1/grands-prix/${gpId}/races`, {
+  const res = await fetch(`https://hyprace-api.p.rapidapi.com/v2/grands-prix/${gpId}/races`, {
     headers: {
       'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
       'X-RapidAPI-Host': 'hyprace-api.p.rapidapi.com'

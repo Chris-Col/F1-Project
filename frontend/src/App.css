@@ -1,42 +1,56 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* src/App.css - App-specific overrides */
+
+/* Homepage hero section */
+.hero-section {
   text-align: center;
+  padding: 4rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.hero-section h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #ffffff 0%, #e10600 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-@keyframes logo-spin {
+.hero-section p {
+  font-size: 1.25rem;
+  color: var(--text-secondary, #a0a0a0);
+  margin-bottom: 2rem;
+}
+
+/* Page transitions */
+.page-container {
+  animation: pageEnter 0.4s ease forwards;
+}
+
+@keyframes pageEnter {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(20px);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Thank you page */
+.thank-you-container {
+  text-align: center;
+  padding: 4rem 2rem;
 }
 
-.card {
-  padding: 2em;
+.thank-you-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
 }
 
-.read-the-docs {
-  color: #888;
+.thank-you-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
 }

@@ -1,0 +1,240 @@
+{
+  "metadata": {
+    "generatedAt": "2026-01-12T04:22:26.197Z",
+    "seasonYear": 2025,
+    "finishedRaces": 24
+  },
+  "stats": [
+    {
+      "id": "ddd64b72-af61-4995-20e8-08d9161fe7c5",
+      "name": "Lando Norris",
+      "img": "/imgs/norris.avif",
+      "nationality": "British",
+      "avgFinish": "4.3",
+      "avgSprint": "3.2",
+      "avgQual": "3.0",
+      "points": 423,
+      "wdcPosition": 1
+    },
+    {
+      "id": "6b0537a9-c218-4077-21d1-08d9161fe7c5",
+      "name": "Max Verstappen",
+      "img": "/imgs/verstappen.avif",
+      "nationality": "Dutch",
+      "avgFinish": "3.0",
+      "avgSprint": "5.0",
+      "avgQual": "3.5",
+      "points": 421,
+      "wdcPosition": 2
+    },
+    {
+      "id": "85ff2ae2-e87d-476d-ae15-a6715dd826f2",
+      "name": "Oscar Piastri",
+      "img": "/imgs/piastri.avif",
+      "nationality": "Australian",
+      "avgFinish": "3.5",
+      "avgSprint": "1.8",
+      "avgQual": "3.0",
+      "points": 410,
+      "wdcPosition": 3
+    },
+    {
+      "id": "5d86760d-5842-4ca1-214d-08d9161fe7c5",
+      "name": "George Russell",
+      "img": "/imgs/russell.avif",
+      "nationality": "British",
+      "avgFinish": "4.5",
+      "avgSprint": "4.5",
+      "avgQual": "4.4",
+      "points": 319,
+      "wdcPosition": 4
+    },
+    {
+      "id": "475001fd-71ed-4f7e-2077-08d9161fe7c5",
+      "name": "Charles Leclerc",
+      "img": "/imgs/leclerc.avif",
+      "nationality": "Monegasque",
+      "avgFinish": "5.6",
+      "avgSprint": "6.4",
+      "avgQual": "5.5",
+      "points": 242,
+      "wdcPosition": 5
+    },
+    {
+      "id": "d5a0947b-fb07-472f-200c-08d9161fe7c5",
+      "name": "Lewis Hamilton",
+      "img": "/imgs/hamilton.avif",
+      "nationality": "British",
+      "avgFinish": "7.5",
+      "avgSprint": "7.8",
+      "avgQual": "9.0",
+      "points": 156,
+      "wdcPosition": 6
+    },
+    {
+      "id": "966db4a2-daa2-4aaf-ab2f-95783adc599c",
+      "name": "Andrea Kimi Antonelli",
+      "img": "/imgs/antonelli.avif",
+      "nationality": "Italian",
+      "avgFinish": "8.2",
+      "avgSprint": "7.8",
+      "avgQual": "8.6",
+      "points": 150,
+      "wdcPosition": 7
+    },
+    {
+      "id": "c0d3f714-9862-48da-1ebd-08d9161fe7c5",
+      "name": "Alexander Albon",
+      "img": "/imgs/albon.avif",
+      "nationality": "Thai",
+      "avgFinish": "9.7",
+      "avgSprint": "11.8",
+      "avgQual": "12.7",
+      "points": 73,
+      "wdcPosition": 8
+    },
+    {
+      "id": "8a99b5a0-8e1a-4bbc-2155-08d9161fe7c5",
+      "name": "Carlos Sainz",
+      "img": "/imgs/sainz.avif",
+      "nationality": "Spanish",
+      "avgFinish": "10.8",
+      "avgSprint": "9.6",
+      "avgQual": "10.6",
+      "points": 64,
+      "wdcPosition": 9
+    },
+    {
+      "id": "e78d2503-7af4-4f96-1ec3-08d9161fe7c5",
+      "name": "Fernando Alonso",
+      "img": "/imgs/alonso.avif",
+      "nationality": "Spanish",
+      "avgFinish": "10.3",
+      "avgSprint": "9.3",
+      "avgQual": "10.4",
+      "points": 56,
+      "wdcPosition": 10
+    },
+    {
+      "id": "4b1e9f86-8c8a-4887-2031-08d9161fe7c5",
+      "name": "Nico Hülkenberg",
+      "img": "/imgs/hülkenberg.avif",
+      "nationality": "German",
+      "avgFinish": "11.8",
+      "avgSprint": "15.0",
+      "avgQual": "14.9",
+      "points": 51,
+      "wdcPosition": 11
+    },
+    {
+      "id": "36dccc49-4405-48b8-954f-a2e2d24d45b3",
+      "name": "Isack Hadjar",
+      "img": "/imgs/hadjar.avif",
+      "nationality": "French",
+      "avgFinish": "11.2",
+      "avgSprint": "10.3",
+      "avgQual": "9.7",
+      "points": 51,
+      "wdcPosition": 12
+    },
+    {
+      "id": "7c13305f-e644-4cf9-bfd2-fdeb1c8a9e98",
+      "name": "Oliver Bearman",
+      "img": "/imgs/bearman.avif",
+      "nationality": "British",
+      "avgFinish": "10.7",
+      "avgSprint": "12.5",
+      "avgQual": "13.8",
+      "points": 41,
+      "wdcPosition": 13
+    },
+    {
+      "id": "63e3ece6-0d7b-420e-bbb7-e3cde9a300a7",
+      "name": "Liam Lawson",
+      "img": "/imgs/lawson.avif",
+      "nationality": "New Zealander",
+      "avgFinish": "11.4",
+      "avgSprint": "12.7",
+      "avgQual": "12.5",
+      "points": 38,
+      "wdcPosition": 14
+    },
+    {
+      "id": "dd4c7365-725c-4263-20ec-08d9161fe7c5",
+      "name": "Esteban Ocon",
+      "img": "/imgs/ocon.avif",
+      "nationality": "French",
+      "avgFinish": "12.2",
+      "avgSprint": "11.8",
+      "avgQual": "14.9",
+      "points": 38,
+      "wdcPosition": 15
+    },
+    {
+      "id": "9426b65f-de5d-4e18-2196-08d9161fe7c5",
+      "name": "Lance Stroll",
+      "img": "/imgs/stroll.avif",
+      "nationality": "Canadian",
+      "avgFinish": "13.5",
+      "avgSprint": "11.0",
+      "avgQual": "16.0",
+      "points": 33,
+      "wdcPosition": 16
+    },
+    {
+      "id": "454112c8-fc48-4bab-21be-08d9161fe7c5",
+      "name": "Yuki Tsunoda",
+      "img": "/imgs/tsunoda.avif",
+      "nationality": "Japanese",
+      "avgFinish": "12.3",
+      "avgSprint": "8.0",
+      "avgQual": "12.6",
+      "points": 33,
+      "wdcPosition": 17
+    },
+    {
+      "id": "f9f291a5-c9de-432d-1fe1-08d9161fe7c5",
+      "name": "Pierre Gasly",
+      "img": "/imgs/gasly.avif",
+      "nationality": "French",
+      "avgFinish": "14.1",
+      "avgSprint": "11.2",
+      "avgQual": "13.4",
+      "points": 22,
+      "wdcPosition": 18
+    },
+    {
+      "id": "37061ea2-a468-472b-927f-ce3ffd436d42",
+      "name": "Gabriel Bortoleto",
+      "img": "/imgs/bortoleto.avif",
+      "nationality": "Brazilian",
+      "avgFinish": "13.3",
+      "avgSprint": "13.7",
+      "avgQual": "14.0",
+      "points": 19,
+      "wdcPosition": 19
+    },
+    {
+      "id": "000fd83e-709a-4719-bf50-87e1f08cbb20",
+      "name": "Franco Colapinto",
+      "img": "/imgs/colapinto.avif",
+      "nationality": "Argentine",
+      "avgFinish": "15.8",
+      "avgSprint": "17.7",
+      "avgQual": "16.9",
+      "points": 0,
+      "wdcPosition": 20
+    },
+    {
+      "id": "f5141c89-0a9e-4c24-86ea-750401289819",
+      "name": "Jack Doohan",
+      "img": "/imgs/doohan.avif",
+      "nationality": "Australian",
+      "avgFinish": "14.8",
+      "avgSprint": "18.0",
+      "avgQual": "15.5",
+      "points": 0,
+      "wdcPosition": 21
+    }
+  ]
+}

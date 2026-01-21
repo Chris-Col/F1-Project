@@ -1,0 +1,259 @@
+{
+  "metadata": {
+    "generatedAt": "2026-01-12T04:22:26.197Z",
+    "seasonYear": 2025,
+    "finishedRaces": 24
+  },
+  "teams": [
+    {
+      "teamId": "e681d1ce-b63a-4128-809a-95d1ee939aa4",
+      "teamName": "McLaren",
+      "teamColor": "FF8000",
+      "driver1": {
+        "id": "ddd64b72-af61-4995-20e8-08d9161fe7c5",
+        "name": "Lando Norris",
+        "lastName": "Norris",
+        "points": 423,
+        "raceWins": 13,
+        "qualiWins": 14,
+        "dnfs": 1
+      },
+      "driver2": {
+        "id": "85ff2ae2-e87d-476d-ae15-a6715dd826f2",
+        "name": "Oscar Piastri",
+        "lastName": "Piastri",
+        "points": 410,
+        "raceWins": 11,
+        "qualiWins": 10,
+        "dnfs": 0
+      },
+      "totalRaces": 24,
+      "totalQualis": 24
+    },
+    {
+      "teamId": "b149bbb9-c708-4fe4-b11f-65dc61f494cc",
+      "teamName": "Red Bull Racing",
+      "teamColor": "3671C6",
+      "driver1": {
+        "id": "6b0537a9-c218-4077-21d1-08d9161fe7c5",
+        "name": "Max Verstappen",
+        "lastName": "Verstappen",
+        "points": 421,
+        "raceWins": 18,
+        "qualiWins": 17,
+        "dnfs": 2
+      },
+      "driver2": {
+        "id": "63e3ece6-0d7b-420e-bbb7-e3cde9a300a7",
+        "name": "Liam Lawson",
+        "lastName": "Lawson",
+        "points": 38,
+        "raceWins": 4,
+        "qualiWins": 5,
+        "dnfs": 3
+      },
+      "totalRaces": 22,
+      "totalQualis": 22
+    },
+    {
+      "teamId": "ffb94739-8632-4f2e-8948-4c19bef7b204",
+      "teamName": "Mercedes",
+      "teamColor": "27F4D2",
+      "driver1": {
+        "id": "5d86760d-5842-4ca1-214d-08d9161fe7c5",
+        "name": "George Russell",
+        "lastName": "Russell",
+        "points": 319,
+        "raceWins": 15,
+        "qualiWins": 16,
+        "dnfs": 2
+      },
+      "driver2": {
+        "id": "966db4a2-daa2-4aaf-ab2f-95783adc599c",
+        "name": "Andrea Kimi Antonelli",
+        "lastName": "Antonelli",
+        "points": 150,
+        "raceWins": 9,
+        "qualiWins": 8,
+        "dnfs": 4
+      },
+      "totalRaces": 24,
+      "totalQualis": 24
+    },
+    {
+      "teamId": "300e67a0-9bc5-429e-a419-c2a98bf8c7a7",
+      "teamName": "Ferrari",
+      "teamColor": "E8002D",
+      "driver1": {
+        "id": "475001fd-71ed-4f7e-2077-08d9161fe7c5",
+        "name": "Charles Leclerc",
+        "lastName": "Leclerc",
+        "points": 242,
+        "raceWins": 14,
+        "qualiWins": 18,
+        "dnfs": 3
+      },
+      "driver2": {
+        "id": "d5a0947b-fb07-472f-200c-08d9161fe7c5",
+        "name": "Lewis Hamilton",
+        "lastName": "Hamilton",
+        "points": 156,
+        "raceWins": 10,
+        "qualiWins": 6,
+        "dnfs": 2
+      },
+      "totalRaces": 24,
+      "totalQualis": 24
+    },
+    {
+      "teamId": "4d2e1886-1400-46cb-b43a-a990dd5e171d",
+      "teamName": "Williams",
+      "teamColor": "64C4FF",
+      "driver1": {
+        "id": "c0d3f714-9862-48da-1ebd-08d9161fe7c5",
+        "name": "Alexander Albon",
+        "lastName": "Albon",
+        "points": 73,
+        "raceWins": 14,
+        "qualiWins": 13,
+        "dnfs": 2
+      },
+      "driver2": {
+        "id": "8a99b5a0-8e1a-4bbc-2155-08d9161fe7c5",
+        "name": "Carlos Sainz",
+        "lastName": "Sainz",
+        "points": 64,
+        "raceWins": 10,
+        "qualiWins": 11,
+        "dnfs": 3
+      },
+      "totalRaces": 24,
+      "totalQualis": 24
+    },
+    {
+      "teamId": "a49b7d7b-85a5-4569-8a93-314496a413cd",
+      "teamName": "Aston Martin",
+      "teamColor": "229971",
+      "driver1": {
+        "id": "e78d2503-7af4-4f96-1ec3-08d9161fe7c5",
+        "name": "Fernando Alonso",
+        "lastName": "Alonso",
+        "points": 56,
+        "raceWins": 14,
+        "qualiWins": 17,
+        "dnfs": 2
+      },
+      "driver2": {
+        "id": "9426b65f-de5d-4e18-2196-08d9161fe7c5",
+        "name": "Lance Stroll",
+        "lastName": "Stroll",
+        "points": 33,
+        "raceWins": 10,
+        "qualiWins": 7,
+        "dnfs": 3
+      },
+      "totalRaces": 24,
+      "totalQualis": 24
+    },
+    {
+      "teamId": "63233467-d32f-4f13-95c4-b7598313a268",
+      "teamName": "RB",
+      "teamColor": "6692FF",
+      "driver1": {
+        "id": "454112c8-fc48-4bab-21be-08d9161fe7c5",
+        "name": "Yuki Tsunoda",
+        "lastName": "Tsunoda",
+        "points": 33,
+        "raceWins": 10,
+        "qualiWins": 9,
+        "dnfs": 4
+      },
+      "driver2": {
+        "id": "36dccc49-4405-48b8-954f-a2e2d24d45b3",
+        "name": "Isack Hadjar",
+        "lastName": "Hadjar",
+        "points": 51,
+        "raceWins": 14,
+        "qualiWins": 15,
+        "dnfs": 2
+      },
+      "totalRaces": 24,
+      "totalQualis": 24
+    },
+    {
+      "teamId": "0ef5793f-ba41-4238-aea8-7232f8f16b59",
+      "teamName": "Haas",
+      "teamColor": "B6BABD",
+      "driver1": {
+        "id": "7c13305f-e644-4cf9-bfd2-fdeb1c8a9e98",
+        "name": "Oliver Bearman",
+        "lastName": "Bearman",
+        "points": 41,
+        "raceWins": 12,
+        "qualiWins": 15,
+        "dnfs": 2
+      },
+      "driver2": {
+        "id": "dd4c7365-725c-4263-20ec-08d9161fe7c5",
+        "name": "Esteban Ocon",
+        "lastName": "Ocon",
+        "points": 38,
+        "raceWins": 12,
+        "qualiWins": 9,
+        "dnfs": 3
+      },
+      "totalRaces": 24,
+      "totalQualis": 24
+    },
+    {
+      "teamId": "69e4eb29-8dac-4f65-aa69-2982a188f3a7",
+      "teamName": "Kick Sauber",
+      "teamColor": "52E252",
+      "driver1": {
+        "id": "4b1e9f86-8c8a-4887-2031-08d9161fe7c5",
+        "name": "Nico Hülkenberg",
+        "lastName": "Hülkenberg",
+        "points": 51,
+        "raceWins": 15,
+        "qualiWins": 14,
+        "dnfs": 1
+      },
+      "driver2": {
+        "id": "37061ea2-a468-472b-927f-ce3ffd436d42",
+        "name": "Gabriel Bortoleto",
+        "lastName": "Bortoleto",
+        "points": 19,
+        "raceWins": 9,
+        "qualiWins": 10,
+        "dnfs": 3
+      },
+      "totalRaces": 24,
+      "totalQualis": 24
+    },
+    {
+      "teamId": "395c46fe-ab70-4b26-81c7-0f96603d08bd",
+      "teamName": "Alpine",
+      "teamColor": "FF87BC",
+      "driver1": {
+        "id": "f9f291a5-c9de-432d-1fe1-08d9161fe7c5",
+        "name": "Pierre Gasly",
+        "lastName": "Gasly",
+        "points": 22,
+        "raceWins": 16,
+        "qualiWins": 18,
+        "dnfs": 4
+      },
+      "driver2": {
+        "id": "f5141c89-0a9e-4c24-86ea-750401289819",
+        "name": "Jack Doohan",
+        "lastName": "Doohan",
+        "points": 0,
+        "raceWins": 8,
+        "qualiWins": 6,
+        "dnfs": 5
+      },
+      "totalRaces": 24,
+      "totalQualis": 24
+    }
+  ]
+}

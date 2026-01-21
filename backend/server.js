@@ -20,6 +20,7 @@ import leaderboardRouter from './routes/leaderboard.js';
 import predictionsRouter from './routes/predictions.js';
 import devAuth from './routes/devAuth.js';
 import adminRouter from './routes/admin.js';
+import statsCacheRouter from './routes/statsCache.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '.env') });
@@ -64,6 +65,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/predictions', predictionsRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/stats', statsCacheRouter);
 
 // simple health check
 app.get('/api/health', (_req, res) => res.json({ ok: true }));

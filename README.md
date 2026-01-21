@@ -2,7 +2,7 @@
 
 A full-stack Formula 1 prediction game where users predict race results, compete on leaderboards, and track driver statistics throughout the season.
 
-**[Live Demo](https://f1-project-fawn.vercel.app)** | **[API](https://f1-project-hkyr.onrender.com/api/health)**
+**[Live Demo](https://f1-project-fawn.vercel.app)**
 
 ---
 

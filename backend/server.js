@@ -31,8 +31,26 @@ const app = express();
 app.use(addRequestId);  // Add request ID first
 app.use(httpLogger);    // Log all HTTP requests
 
+// CORS configuration - allow multiple origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://f1-project-fawn.vercel.app',
+  process.env.CLIENT_ORIGIN,
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    // Also allow any vercel.app subdomain for preview deployments
+    if (origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: false,
 }));
 app.use(express.json());

@@ -74,7 +74,7 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }));
 const clientDist = path.join(__dirname, 'dist'); // change to 'build' if CRA
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(clientDist));
-  app.get('*', (_req, res) => res.sendFile(path.join(clientDist, 'index.html')));
+  app.get('/{*path}', (_req, res) => res.sendFile(path.join(clientDist, 'index.html')));
 } else {
   app.get('/', (_req, res) => res.send('API is running (dev)…'));
 }
